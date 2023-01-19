@@ -1,2 +1,2 @@
 # PowerShell Scripts
-Useful script ive created and others found on the internet
+Useful scripts ive created and others found on the internet
