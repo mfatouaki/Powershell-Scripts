@@ -5,16 +5,14 @@ $winget = Get-Command winget -ErrorAction SilentlyContinue
 # If winget is not installed, install it
 if (!$winget) {
 
-#Winget dependency install
+#Winget dependency
 $dependency = "https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx"
 Invoke-WebRequest -Uri $dependency -OutFile Microsoft.VCLibs.x64.14.00.Desktop.appx
-Add-AppxPackage -Path .\Microsoft.VCLibs.x64.14.00.Desktop.appx -ForceUpdateFromAnyVersion -ForceTargetApplicationShutdown
-
 
 #Winget Install
 $WingetDLLink = "https://github.com/microsoft/winget-cli/releases/download/v1.3.431/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle"
 Invoke-WebRequest -Uri $WIngetDLLink -OutFile winget-installer.msixbundle
-Add-AppxPackage -Path .\winget-installer.msixbundle -ForceUpdateFromAnyVersion -ForceTargetApplicationShutdown
+Add-AppxPackage -Path .\winget-installer.msixbundle -DependencyPath .\Microsoft.VCLibs.x64.14.00.Desktop.appx -ForceUpdateFromAnyVersion -ForceTargetApplicationShutdown
 
 }
 
