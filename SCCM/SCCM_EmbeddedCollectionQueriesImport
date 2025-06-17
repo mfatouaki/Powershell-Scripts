@@ -1,0 +1,32 @@
+$csvPath = "C:\Temp\SCCM_EmbeddedCollectionQueries.csv"
+
+Import-Csv -Path $csvPath | ForEach-Object {
+    $name = $_.RuleName.Trim()
+    $wql  = $_.Query.Trim()
+
+    # Extract TargetClassName (the first word after "from")
+    $targetClass = ""
+    if ($wql -match 'from\s+([^\s]+)') {
+        $targetClass = $matches[1]
+    }
+
+    if (![string]::IsNullOrWhiteSpace($name) -and
+        ![string]::IsNullOrWhiteSpace($wql) -and
+        ![string]::IsNullOrWhiteSpace($targetClass)) {
+
+        # Check if the query already exists
+        if (-not (Get-CMQuery -Name $name -ErrorAction SilentlyContinue)) {
+            try {
+                New-CMQuery -Name $name -TargetClassName $targetClass -Expression $wql
+                Write-Host "✔ Created query: $name ($targetClass)"
+            }
+            catch {
+                Write-Host "❌ Failed to create: $name ($targetClass) — $($_.Exception.Message)"
+            }
+        } else {
+            Write-Host "⚠ Query already exists: $name"
+        }
+    } else {
+        Write-Host "❌ Skipped invalid or incomplete row: $name"
+    }
+}
