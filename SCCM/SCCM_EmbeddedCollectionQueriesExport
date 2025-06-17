@@ -1,0 +1,11 @@
+$embeddedQueries = Get-CMCollection | ForEach-Object {
+    $rules = Get-CMCollectionQueryMembershipRule -CollectionId $_.CollectionID
+    $rules | ForEach-Object {
+        [PSCustomObject]@{
+            RuleName       = $_.RuleName
+            Query          = $_.QueryExpression
+        }
+    }
+}
+
+$embeddedQueries | Export-Csv -Path "C:\temp\SCCM_EmbeddedCollectionQueries.csv" -NoTypeInformation
